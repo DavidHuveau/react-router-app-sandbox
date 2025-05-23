@@ -9,7 +9,7 @@ A modern, production-ready template for building full-stack React applications u
 - 📦 Asset bundling and optimization
 - 🔄 Data loading and mutations
 - 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
+- 🎉 react-boostrap
 - 📖 [React Router docs](https://reactrouter.com/)
 
 ## Getting Started
