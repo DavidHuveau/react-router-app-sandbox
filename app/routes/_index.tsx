@@ -1,5 +1,5 @@
 import type { Route } from "../+types/root";
-import { Welcome } from "../welcome/welcome";
+import Welcome from "@/welcome/welcome";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -12,6 +12,8 @@ export function loader({ context }: Route.LoaderArgs) {
   return { message: context.VALUE_FROM_EXPRESS };
 }
 
-export default function Home({ loaderData }: Route.ComponentProps) {
+export default function Home({
+  loaderData
+}: Route.ComponentProps) {
   return <Welcome message={loaderData.message} />;
 }

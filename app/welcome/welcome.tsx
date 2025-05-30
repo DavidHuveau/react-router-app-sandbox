@@ -1,6 +1,6 @@
 import { Container, Row, Col, Card, ListGroup } from "react-bootstrap";
 
-export function Welcome({ message }: { message: string }) {
+export default function Welcome({ message }: { message: string }) {
   return (
     <Container fluid className="h-100 d-flex align-items-center justify-content-center">
       <Row className="w-100 justify-content-center">
