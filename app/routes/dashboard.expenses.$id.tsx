@@ -1,5 +1,5 @@
 import type { Expense } from "@/types/expenses";
-import type { Route } from ".react-router/types/app/routes/+types/dashboard.expenses.$id";
+import type { DashboardExpenseRoute } from "@/types/routes-types";
 
 const DATA: Expense[] = [
   {
@@ -21,7 +21,7 @@ const DATA: Expense[] = [
 
 export function loader({
   params
-}: Route.LoaderArgs) {
+}: DashboardExpenseRoute.LoaderArgs) {
   const expense = DATA.find(expense => expense.id === Number(params.id));
   if (!expense) throw new Response("Not found", { status: 404 });
 
@@ -30,7 +30,7 @@ export function loader({
 
 export default function ExpenseDetail({
   loaderData,
-}: Route.ComponentProps) {
+}: DashboardExpenseRoute.ComponentProps) {
   const { id, title, amount } = loaderData
   return (
     <div style={{ width: "100%" }}>
