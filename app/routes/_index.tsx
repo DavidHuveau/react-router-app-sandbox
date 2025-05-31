@@ -13,7 +13,10 @@ export function loader({ context }: Route.LoaderArgs) {
 }
 
 export default function Home({
-  loaderData
-}: Route.ComponentProps) {
-  return <Welcome message={loaderData.message} />;
+  loaderData,
+}: {
+  loaderData: Awaited<ReturnType<typeof loader>>;
+}) {
+  const { message } = loaderData;
+  return <Welcome message={message} />;
 }
