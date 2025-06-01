@@ -1,27 +1,27 @@
 import type { Transation } from "@/types/transaction";
-import type { DashboardExpenseRoute } from "@/types/routes-types";
+import type { DashboardIncomeRoute } from "@/types/routes-types";
 
 const DATA: Transation[] = [
   {
     id: 1,
-    title: "Food",
-    amount: 100,
+    title: "Salary October",
+    amount: 2500,
   },
   {
     id: 2,
-    title: "Transport",
-    amount: 100,
+    title: "Salary September",
+    amount: 2500,
   },
   {
     id: 3,
-    title: "Entertainment",
-    amount: 100,
+    title: "Salary August",
+    amount: 2500,
   },
 ];
 
 export function loader({
   params
-}: DashboardExpenseRoute.LoaderArgs) {
+}: DashboardIncomeRoute.LoaderArgs) {
   const transaction = DATA.find(transaction => transaction.id === Number(params.id));
   if (!transaction) throw new Response("Not found", { status: 404 });
 
@@ -30,7 +30,7 @@ export function loader({
 
 export default function ExpenseDetail({
   loaderData,
-}: DashboardExpenseRoute.ComponentProps) {
+}: DashboardIncomeRoute.ComponentProps) {
   const { id, title, amount } = loaderData
   return (
     <div style={{ width: "100%" }}>
