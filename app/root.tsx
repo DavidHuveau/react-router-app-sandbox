@@ -12,6 +12,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./app.css";
 
 import type { Route } from "./+types/root";
+import PageTransitionProgressBar from "@/components/PageTransitionProgressBar";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -36,6 +37,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body suppressHydrationWarning>
+        <PageTransitionProgressBar />
         {children}
         <ScrollRestoration />
         <Scripts />
