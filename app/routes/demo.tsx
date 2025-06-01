@@ -12,7 +12,7 @@ export function loader({ context }: Route.LoaderArgs) {
   return { message: context.VALUE_FROM_EXPRESS };
 }
 
-export default function Home({
+export default function Demo({
   loaderData,
 }: {
   loaderData: Awaited<ReturnType<typeof loader>>;
