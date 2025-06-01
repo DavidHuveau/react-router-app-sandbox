@@ -1,6 +1,8 @@
-import { Outlet, Link } from "react-router";
+import { Outlet, Link, useNavigation } from "react-router";
 
 export default function IncomeLayout() {
+  const navigation = useNavigation();
+
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <section style={{ width: "250px", borderRight: "1px solid #ccc", padding: "20px" }}>
@@ -18,7 +20,10 @@ export default function IncomeLayout() {
           </ul>
         </nav>
       </section>
-      <section style={{ flex: 1, padding: "20px" }}>
+      <section
+        style={{ flex: 1, padding: "20px" }}
+        className={`${navigation.state === "loading" ? "loading-pulse" : ""}`}
+      >
         <Outlet />
       </section>
     </div>
