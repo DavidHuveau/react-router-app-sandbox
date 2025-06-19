@@ -1,31 +1,13 @@
-import type { Transation } from "@/types/transaction";
 import type { DashboardExpenseRoute } from "@/types/routes-types";
+import db from "@/lib/db.server";
 
-const DATA: Transation[] = [
-  {
-    id: 1,
-    title: "Food",
-    amount: 100,
-  },
-  {
-    id: 2,
-    title: "Transport",
-    amount: 100,
-  },
-  {
-    id: 3,
-    title: "Entertainment",
-    amount: 100,
-  },
-];
-
-export function loader({
+export async function loader({
   params
 }: DashboardExpenseRoute.LoaderArgs) {
-  const transaction = DATA.find(transaction => transaction.id === Number(params.id));
-  if (!transaction) throw new Response("Not found", { status: 404 });
+  const expense = await db.expense.findUnique({ where: { id: params.id } });
+  if (!expense) throw new Response("Not found", { status: 404 });
 
-  return transaction;
+  return expense;
 }
 
 export default function ExpenseDetail({

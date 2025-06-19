@@ -3,12 +3,18 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build:db": "npx prisma generate",
     "build": "react-router build",
     "dev": "cross-env NODE_ENV=development node server.js",
+    "format:db": "npx prisma format",
+    "reset:db": "rimraf ./prisma/dev.db && npm run update:db && npm run seed",
+    "seed": "npx tsx prisma/seed.ts",
     "start": "node server.js",
-    "typecheck": "react-router typegen && tsc -b"
+    "typecheck": "react-router typegen && tsc -b",
+    "update:db": "npx prisma db push"
   },
   "dependencies": {
+    "@prisma/client": "^6.9.0",
     "@react-router/express": "^7.5.3",
     "@react-router/fs-routes": "^7.6.0",
     "@react-router/node": "^7.5.3",
@@ -33,6 +39,8 @@
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "cross-env": "^7.0.3",
+    "prisma": "^6.9.0",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "vite": "^6.3.3",
     "vite-tsconfig-paths": "^5.1.4"

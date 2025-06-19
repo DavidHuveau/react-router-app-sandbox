@@ -1,6 +1,20 @@
 import { Outlet, Link, useNavigation } from "react-router";
+import type { DashboardExpenseLayoutRoute } from "@/types/routes-types";
+import db from "@/lib/db.server";
 
-export default function ExpensesLayout() {
+export async function loader() {
+  const expenses = await db.expense.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return { expenses };
+}
+
+export default function ExpensesLayout({
+  loaderData,
+}: DashboardExpenseLayoutRoute.ComponentProps) {
+  const { expenses } = loaderData;
   const navigation = useNavigation();
 
   return (
@@ -8,15 +22,11 @@ export default function ExpensesLayout() {
       <section style={{ width: "250px", borderRight: "1px solid #ccc", padding: "20px" }}>
         <nav>
           <ul>
-            <li>
-              <Link to="/dashboard/expenses/1">Food</Link>
-            </li>
-            <li>
-              <Link to="/dashboard/expenses/2">Transport</Link>
-            </li>
-            <li>
-              <Link to="/dashboard/expenses/3">Entertainment</Link>
-            </li>
+            {expenses.map((expense) => (
+              <li key={expense.id}>
+                <Link to={`/dashboard/expenses/${expense.id}`}>{expense.title}</Link>
+              </li>
+            ))}
           </ul>
         </nav>
       </section>

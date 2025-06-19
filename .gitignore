@@ -82,3 +82,5 @@ sketch
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/react,remix,macos,visualstudiocode
+
+/prisma/dev.db

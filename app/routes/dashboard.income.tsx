@@ -1,6 +1,20 @@
 import { Outlet, Link, useNavigation } from "react-router";
+import type { DashboardIncomeLayoutRoute } from "@/types/routes-types";
+import db from "@/lib/db.server";
 
-export default function IncomeLayout() {
+export async function loader() {
+  const invoices = await db.invoice.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return { invoices };
+}
+
+export default function IncomeLayout({
+  loaderData,
+}: DashboardIncomeLayoutRoute.ComponentProps) {
+  const { invoices } = loaderData;
   const navigation = useNavigation();
 
   return (
@@ -8,15 +22,11 @@ export default function IncomeLayout() {
       <section style={{ width: "250px", borderRight: "1px solid #ccc", padding: "20px" }}>
         <nav>
           <ul>
-            <li>
-              <Link to="/dashboard/income/1">Salary October</Link>
-            </li>
-            <li>
-              <Link to="/dashboard/income/2">Salary September</Link>
-            </li>
-            <li>
-              <Link to="/dashboard/income/3">Salary August</Link>
-            </li>
+          {invoices.map((invoice) => (
+              <li key={invoice.id}>
+                <Link to={`/dashboard/income/${invoice.id}`}>{invoice.title}</Link>
+              </li>
+            ))}
           </ul>
         </nav>
       </section>
