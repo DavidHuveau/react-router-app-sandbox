@@ -24,7 +24,14 @@ export default function ExpensesLayout({
           <ul>
             {expenses.map((expense) => (
               <li key={expense.id}>
-                <Link to={`/dashboard/expenses/${expense.id}`}>{expense.title}</Link>
+                <Link to={`/dashboard/expenses/${expense.id}`}>
+                  <div style={{ fontSize: "1rem", fontWeight: "bold" }}>{expense.title}</div>
+                  <div style={{ fontSize: "0.7rem" }}>
+                    <b>
+                      {expense.amount} {expense.currencyCode}
+                    </b>
+                  </div>
+                </Link>
               </li>
             ))}
           </ul>

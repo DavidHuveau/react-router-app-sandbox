@@ -13,13 +13,14 @@ export async function loader({
 export default function IncomeDetail({
   loaderData,
 }: DashboardIncomeRoute.ComponentProps) {
-  const { id, title, amount } = loaderData
+  const { id, title, amount, createdAt } = loaderData
   return (
     <div style={{ width: "100%" }}>
       <h2>Income Details</h2>
       <p>ID: {id}</p>
       <p>Title: {title}</p>
       <p>Amount: {amount}</p>
+      <p>Created At: {createdAt.toLocaleDateString()}</p>
     </div>
   );
 }
