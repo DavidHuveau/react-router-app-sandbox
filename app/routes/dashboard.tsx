@@ -1,6 +1,28 @@
 import { Outlet, Link } from "react-router";
+import type { DashboardLayoutRoute } from "@/types/routes-types";
+import db from "@/lib/db.server";
 
-export default function DashboardLayout() {
+export async function loader() {
+  const expenseQuery = db.expense.findFirst({
+    orderBy: { 
+      createdAt: "desc",
+    },
+  });
+  const invoiceQuery = db.invoice.findFirst({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  const [firstExpense, firstInvoice] = await Promise.all([expenseQuery, invoiceQuery]);
+  return { firstExpense, firstInvoice };
+}
+
+export default function DashboardLayout({
+  loaderData,
+}: DashboardLayoutRoute.ComponentProps) {
+  const { firstExpense, firstInvoice } = loaderData;
+
   return (
     <>
       <header>
@@ -15,10 +37,10 @@ export default function DashboardLayout() {
           </ul>
           <ul style={{ display: "flex", justifyContent: "center", gap: "2rem", padding: "1rem", listStyle: "none", margin: 0 }}>
             <li>
-              <Link to="/dashboard/income">Income</Link>
+              <Link to={firstInvoice ? `/dashboard/income/${firstInvoice.id}` : "/dashboard/income"}>Income</Link>
             </li>
             <li>
-              <Link to="/dashboard/expenses">Expenses</Link>
+              <Link to={firstExpense ? `/dashboard/expenses/${firstExpense.id}` : "/dashboard/expenses"}>Expenses</Link>
             </li>
           </ul>
         </nav>

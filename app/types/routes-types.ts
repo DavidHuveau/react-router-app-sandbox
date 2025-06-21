@@ -4,3 +4,4 @@ export type { Route as DashboardExpenseLayoutRoute } from ".react-router/types/a
 export type { Route as DashboardIncomeRoute } from ".react-router/types/app/routes/+types/dashboard.income.$id";
 export type { Route as DashboardIncomeIndexRoute } from ".react-router/types/app/routes/+types/dashboard.income._index";
 export type { Route as DashboardIncomeLayoutRoute } from ".react-router/types/app/routes/+types/dashboard.income";
+export type { Route as DashboardLayoutRoute } from ".react-router/types/app/routes/+types/dashboard";
