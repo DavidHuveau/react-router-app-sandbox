@@ -1,4 +1,5 @@
 import { Outlet, Link, useNavigation } from "react-router";
+import { Button } from "react-bootstrap";
 import type { DashboardExpenseLayoutRoute } from "@/types/routes-types";
 import db from "@/lib/db.server";
 
@@ -20,10 +21,17 @@ export default function ExpensesLayout({
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <section style={{ width: "250px", borderRight: "1px solid #ccc", padding: "20px" }}>
+        <div style={{ marginBottom: "20px" }}>
+          <Link to="/dashboard/expenses">
+            <Button variant="primary" size="sm" style={{ width: "100%" }}>
+              + Add Expense
+            </Button>
+          </Link>
+        </div>
         <nav>
-          <ul>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {expenses.map((expense) => (
-              <li key={expense.id}>
+              <li key={expense.id} style={{ marginBottom: "5px" }}>
                 <Link to={`/dashboard/expenses/${expense.id}`}>
                   <div style={{ fontSize: "1rem", fontWeight: "bold" }}>{expense.title}</div>
                   <div style={{ fontSize: "0.7rem" }}>

@@ -1,5 +1,6 @@
 import { Outlet, Link, useNavigation } from "react-router";
 import type { DashboardIncomeLayoutRoute } from "@/types/routes-types";
+import { Button } from "react-bootstrap";
 import db from "@/lib/db.server";
 
 export async function loader() {
@@ -20,10 +21,17 @@ export default function IncomeLayout({
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <section style={{ width: "250px", borderRight: "1px solid #ccc", padding: "20px" }}>
+        <div style={{ marginBottom: "20px" }}>
+          <Link to="/dashboard/income">
+            <Button variant="primary" size="sm" style={{ width: "100%" }}>
+              + Add Income
+            </Button>
+          </Link>
+        </div>
         <nav>
-          <ul>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
           {invoices.map((invoice) => (
-              <li key={invoice.id}>
+              <li key={invoice.id} style={{ marginBottom: "5px" }}>
                 <Link to={`/dashboard/income/${invoice.id}`}>{invoice.title}</Link>
               </li>
             ))}
