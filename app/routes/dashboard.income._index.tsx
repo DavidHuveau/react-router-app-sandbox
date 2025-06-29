@@ -32,6 +32,7 @@ export async function action({ request }: DashboardIncomeIndexRoute.ActionArgs) 
 export default function IncomeIndex() {
   const submit = useSubmit();
   const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting" && navigation.formAction === "/dashboard/income/?index";
 
   const handleQuickAdd = (title: string, amount: number) => {
     submit(
@@ -43,11 +44,11 @@ export default function IncomeIndex() {
   const renderQuickActionButton = (title: string, amount: number) => (
     <Button 
       onClick={() => handleQuickAdd(title, amount)}
-      disabled={navigation.state === "submitting"}
+      disabled={isSubmitting}
       variant={"outline-secondary"}
       className="me-2"
     >
-      {navigation.state === "submitting" ? "Adding..." : `${title} ($${amount})`}
+      {isSubmitting ? "Adding..." : `${title} ($${amount})`}
     </Button>
   );
 
@@ -77,8 +78,8 @@ export default function IncomeIndex() {
           <Form.Label>Amount (in USD):</Form.Label>
           <Form.Control type="number" name="amount" defaultValue={0} />
         </Form.Group>
-        <Button type="submit" variant="primary">
-          Create
+        <Button type="submit" variant="primary" disabled={isSubmitting}>
+          {isSubmitting ? "Creating..." : "Create"}
         </Button>
       </FormRouter>
     </>
