@@ -54,7 +54,7 @@ export async function action({
 }
 
 export async function loader({
-  params
+  params,
 }: DashboardExpenseRoute.LoaderArgs) {
   const expense = await db.expense.findUnique({ where: { id: params.id } });
   if (!expense) throw new Response("Not found", { status: 404 });
@@ -97,7 +97,7 @@ export default function ExpenseDetail({
           {isUpdating ? (
             <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" >
               <span className="visually-hidden">Updating...</span>
-              </Spinner>
+            </Spinner>
            ) : "Update"}
         </Button>
         <Button type="submit" variant="danger" name="intent" value="delete" disabled={isDeleting} className="ms-2"
@@ -110,7 +110,7 @@ export default function ExpenseDetail({
           {isDeleting ? (
             <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" >
               <span className="visually-hidden">Deleting...</span>
-              </Spinner>
+            </Spinner>
            ) : "Delete"}
         </Button>
       </FormRouter>
