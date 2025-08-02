@@ -1,6 +1,7 @@
-import { Button, Form, Alert, Spinner } from "react-bootstrap";
-import { Form as FormRouter, redirect, useNavigation } from "react-router";
+import { Button, Form, Alert, Spinner, Container, Row, Col } from "react-bootstrap";
+import { Form as FormRouter, redirect, useNavigation, useParams, isRouteErrorResponse } from "react-router";
 import type { DashboardExpenseRoute } from "@/types/routes-types";
+
 import db from "@/lib/db.server";
 
 async function updateExpense(id: string, formData: FormData) {
@@ -115,5 +116,31 @@ export default function Component({
         </Button>
       </FormRouter>
     </>
+  );
+}
+
+  export function ErrorBoundary({ error }: DashboardExpenseRoute.ErrorBoundaryProps) {
+  const { id } = useParams();
+  let heading = "Something went wrong";
+  let message = "Apologies, something went wrong on our end, please try again.";
+  if (isRouteErrorResponse(error) && error.status === 404) {
+    heading = "Expense not found";
+    message = `Apologies, the expense with the id ${id} cannot be found.`;
+  }
+  
+  return (
+    <Container className="py-5">
+      <Row className="justify-content-center">
+        <Col lg={8} className="text-center">
+          <Alert variant="danger" className="mb-4">
+            <h2>{heading}</h2>
+            <p className="mb-0">{message}</p>
+          </Alert>
+          <Button as="a" href="/dashboard/expenses" variant="primary">
+            Back to Expenses
+          </Button>
+        </Col>
+      </Row>
+    </Container>
   );
 }

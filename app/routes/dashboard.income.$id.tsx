@@ -1,5 +1,5 @@
-import { Button, Form, Alert, Spinner } from "react-bootstrap";
-import { Form as FormRouter, redirect, useNavigation } from "react-router";
+import { Button, Form, Alert, Spinner, Container, Row, Col } from "react-bootstrap";
+import { Form as FormRouter, redirect, useNavigation, useParams, isRouteErrorResponse } from "react-router";
 import type { DashboardIncomeRoute } from "@/types/routes-types";
 import db from "@/lib/db.server";
 
@@ -115,5 +115,31 @@ export default function Component({
         </Button>
       </FormRouter>
     </>
+  );
+}
+
+export function ErrorBoundary({ error }: DashboardIncomeRoute.ErrorBoundaryProps) {
+  const { id } = useParams();
+  let heading = "Something went wrong";
+  let message = "Apologies, something went wrong on our end, please try again.";
+  if (isRouteErrorResponse(error) && error.status === 404) {
+    heading = "Income not found";
+    message = `Apologies, the income with the id ${id} cannot be found.`;
+  }
+  
+  return (
+    <Container className="py-5">
+      <Row className="justify-content-center">
+        <Col lg={8} className="text-center">
+          <Alert variant="danger" className="mb-4">
+            <h2>{heading}</h2>
+            <p className="mb-0">{message}</p>
+          </Alert>
+          <Button as="a" href="/dashboard/income" variant="primary">
+            Back to Income
+          </Button>
+        </Col>
+      </Row>
+    </Container>
   );
 }
