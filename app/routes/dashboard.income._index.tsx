@@ -29,7 +29,7 @@ export async function action({ request }: DashboardIncomeIndexRoute.ActionArgs) 
   return redirect(`/dashboard/income/${invoice.id}`);
 }
 
-export default function IncomeIndex() {
+export default function Component() {
   const submit = useSubmit();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting" && navigation.formAction === "/dashboard/income/?index";

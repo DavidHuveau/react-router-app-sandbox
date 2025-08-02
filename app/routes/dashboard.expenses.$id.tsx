@@ -62,7 +62,7 @@ export async function loader({
   return expense;
 }
 
-export default function ExpenseDetail({
+export default function Component({
   loaderData,
   actionData,
 }: DashboardExpenseRoute.ComponentProps) {

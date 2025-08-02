@@ -5,8 +5,9 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  Link,
 } from "react-router";
-import { Container } from "react-bootstrap";
+import { Alert, Container } from "react-bootstrap";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./app.css";
@@ -51,30 +52,59 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
+  let heading = "Unexpected Error";
+  let message = "We are very sorry. An unexpected error occurred. Please try again or contact us if the problem persists.";
   let stack: string | undefined;
+  let errorMessage: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
-    details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
-    stack = error.stack;
+    switch (error.status) {
+      case 401:
+        heading = "401 Unauthorized";
+        message = "Oops! Looks like you tried to visit a page that you do not have access to.";
+        break;
+      case 401:
+        heading = "Access Denied";
+        message = "You don't have permission to access this page.";
+        break;
+      case 404:
+        heading = "404 Not Found";
+        message = "Oops! Looks like you tried to visit a page that does not exist.";
+        break;
+      case 500:
+        heading = "Server Error";
+        message = "Something went wrong on our end. Please try again later.";
+        break;
+      default:
+        heading = `${error.status} Error`;
+        message = error.statusText || message;
+        break;
+    }
+  } 
+  else if (error instanceof Error) {
+    errorMessage = error.message;
+    if (import.meta.env.DEV) {
+      stack = error.stack;
+    }
   }
 
   return (
     <Container className="py-5">
-      <h1>{message}</h1>
-      <p>{details}</p>
+      <h1>{heading}</h1>
+      <p>{message}</p>
+      {errorMessage && (
+        <Alert variant="danger" className="mt-3">
+          Error message: {errorMessage}
+        </Alert>
+      )}
       {stack && (
         <pre className="p-4 overflow-x-auto">
           <code>{stack}</code>
         </pre>
       )}
+      <Link to="/" className="btn btn-primary">
+        Back to homepage
+      </Link>
     </Container>
   );
 }

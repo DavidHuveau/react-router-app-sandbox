@@ -29,7 +29,7 @@ export async function action({ request }: DashboardExpenseIndexRoute.ActionArgs)
   return redirect(`/dashboard/expenses/${expense.id}`);
 }
 
-export default function ExpensesIndex() {
+export default function Component() {
   const submit = useSubmit();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting" && navigation.formAction === "/dashboard/expenses/?index";

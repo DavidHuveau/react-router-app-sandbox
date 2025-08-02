@@ -62,7 +62,7 @@ export async function loader({
   return invoice;
 }
 
-export default function IncomeDetail({
+export default function Component({
   loaderData,
   actionData,
 }: DashboardIncomeRoute.ComponentProps) {

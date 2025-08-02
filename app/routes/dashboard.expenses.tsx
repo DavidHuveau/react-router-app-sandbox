@@ -12,7 +12,7 @@ export async function loader() {
   return { expenses };
 }
 
-export default function ExpensesLayout({
+export default function Component({
   loaderData,
 }: DashboardExpenseLayoutRoute.ComponentProps) {
   const { expenses } = loaderData;
