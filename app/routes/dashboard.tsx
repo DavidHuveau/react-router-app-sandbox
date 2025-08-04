@@ -1,7 +1,7 @@
-import { Outlet, Link, useLocation } from "react-router";
+import { Outlet, Link } from "react-router";
 import type { DashboardLayoutRoute } from "@/types/routes-types";
 import db from "@/lib/db.server";
-import { Alert, Container } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 
 export async function loader() {
   const expenseQuery = db.expense.findFirst({

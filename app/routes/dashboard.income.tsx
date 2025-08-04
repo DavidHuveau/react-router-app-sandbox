@@ -1,12 +1,19 @@
-import { Outlet, Link, useNavigation } from "react-router";
+import { Outlet, Link, useNavigation, useSubmit, Form as FormRouter, useSearchParams } from "react-router";
 import type { DashboardIncomeLayoutRoute } from "@/types/routes-types";
-import { Button } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import db from "@/lib/db.server";
 
-export async function loader() {
+export async function loader({ request }: DashboardIncomeLayoutRoute.LoaderArgs) {
+  const url = new URL(request.url);
+  const searchString = url.searchParams.get("q") || "";
   const invoices = await db.invoice.findMany({
     orderBy: {
       createdAt: "desc",
+    },
+    where: {
+      title: {
+        contains: searchString,
+      },
     },
   });
   return { invoices };
@@ -17,10 +24,19 @@ export default function Component({
 }: DashboardIncomeLayoutRoute.ComponentProps) {
   const { invoices } = loaderData;
   const navigation = useNavigation();
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get("q") || "";
+  const submit = useSubmit();
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <section style={{ width: "250px", borderRight: "1px solid #ccc", padding: "20px" }}>
+        <FormRouter method="GET">
+          <Form.Group className="mb-3">
+            <Form.Label>Search by title</Form.Label>
+            <Form.Control type="search" name="q" placeholder="Monthly Salary" defaultValue={searchQuery} onChange={(e) => submit(e.currentTarget.form)}/>
+          </Form.Group>
+        </FormRouter>
         <div style={{ marginBottom: "20px" }}>
           <Link to="/dashboard/income">
             <Button variant="primary" size="sm" style={{ width: "100%" }}>
