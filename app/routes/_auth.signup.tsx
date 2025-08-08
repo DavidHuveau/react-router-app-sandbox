@@ -1,6 +1,7 @@
 import { Button, Form, Card, Alert } from "react-bootstrap";
 import { Form as FormRouter, redirect, useNavigation } from "react-router";
 import { registerUser } from "@/lib/session/session.server";
+import { validateEmail } from "@/lib/validation";
 import type { AuthSignupRoute } from "@/types/routes-types";
 
 export async function action({ request }: AuthSignupRoute.ActionArgs) {
@@ -25,9 +26,9 @@ export async function action({ request }: AuthSignupRoute.ActionArgs) {
     return { error: "Password must be at least 6 characters long." };
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return { error: "Please enter a valid email address." };
+  const emailError = validateEmail(email);
+  if (emailError) {
+    return { error: emailError };
   }
 
   try {
@@ -40,7 +41,10 @@ export async function action({ request }: AuthSignupRoute.ActionArgs) {
 }
 
 export async function loader({ request }: AuthSignupRoute.LoaderArgs) {
-  // return redirect("/dashboard");
+  // const userId = await getUserId(request);
+  // if (userId) {
+  //   return redirect("/dashboard");
+  // }
   return {};
 }
 
