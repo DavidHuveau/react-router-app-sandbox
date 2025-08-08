@@ -8,10 +8,16 @@ export async function loader() {
     orderBy: { 
       createdAt: "desc",
     },
+    where: {
+      userId: "886ce72c-361f-4beb-9ccb-80df6b73a32c"
+    },
   });
   const invoiceQuery = db.invoice.findFirst({
     orderBy: {
       createdAt: "desc",
+    },
+    where: {
+      userId: "886ce72c-361f-4beb-9ccb-80df6b73a32c"
     },
   });
 

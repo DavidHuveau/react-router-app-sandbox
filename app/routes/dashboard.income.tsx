@@ -11,6 +11,7 @@ export async function loader({ request }: DashboardIncomeLayoutRoute.LoaderArgs)
       createdAt: "desc",
     },
     where: {
+      userId: "886ce72c-361f-4beb-9ccb-80df6b73a32c",
       title: {
         contains: searchString,
       },
