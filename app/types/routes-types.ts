@@ -5,3 +5,6 @@ export type { Route as DashboardIncomeRoute } from ".react-router/types/app/rout
 export type { Route as DashboardIncomeIndexRoute } from ".react-router/types/app/routes/+types/dashboard.income._index";
 export type { Route as DashboardIncomeLayoutRoute } from ".react-router/types/app/routes/+types/dashboard.income";
 export type { Route as DashboardLayoutRoute } from ".react-router/types/app/routes/+types/dashboard";
+
+export type { Route as AuthSignupRoute } from ".react-router/types/app/routes/+types/_auth.signup";
+export type { Route as AuthLoginRoute } from ".react-router/types/app/routes/+types/_auth.login";

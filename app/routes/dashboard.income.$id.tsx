@@ -34,10 +34,7 @@ async function deleteIncome(id: string) {
   }
 }
 
-export async function action({
-  request,
-  params,
-}: DashboardIncomeRoute.ActionArgs) {
+export async function action({ request, params }: DashboardIncomeRoute.ActionArgs) {
   const { id } = params;
   if (!id) throw Error("id parameter must be defined");
 
@@ -53,19 +50,14 @@ export async function action({
   }
 }
 
-export async function loader({
-  params,
-}: DashboardIncomeRoute.LoaderArgs) {
+export async function loader({ params }: DashboardIncomeRoute.LoaderArgs) {
   const invoice = await db.invoice.findUnique({ where: { id: params.id } });
   if (!invoice) throw new Response("Not found", { status: 404 });
 
   return invoice;
 }
 
-export default function Component({
-  loaderData,
-  actionData,
-}: DashboardIncomeRoute.ComponentProps) {
+export default function Component({ loaderData, actionData }: DashboardIncomeRoute.ComponentProps) {
   const { id, title, description, amount } = loaderData;
   const navigation = useNavigation();
   const isSubmitting = navigation.state !== "idle" && navigation.formAction === `/dashboard/income/${id}`;

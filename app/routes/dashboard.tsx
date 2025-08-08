@@ -31,11 +31,7 @@ type LayoutProps = {
   firstInvoice: any | null;
 };
 
-function Layout({
-  firstExpense, 
-  firstInvoice,
-  children
-}: LayoutProps) {
+function Layout({ firstExpense, firstInvoice, children }: LayoutProps) {
   return (
     <>
       <header>
@@ -65,9 +61,7 @@ function Layout({
   );
 }
 
-export default function Component({
-  loaderData,
-}: DashboardLayoutRoute.ComponentProps) {
+export default function Component({ loaderData }: DashboardLayoutRoute.ComponentProps) {
   const { firstExpense, firstInvoice } = loaderData;
 
   return (

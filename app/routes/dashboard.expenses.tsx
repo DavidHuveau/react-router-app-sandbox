@@ -20,9 +20,7 @@ export async function loader({ request }: DashboardExpenseLayoutRoute.LoaderArgs
   return { expenses };
 }
 
-export default function Component({
-  loaderData,
-}: DashboardExpenseLayoutRoute.ComponentProps) {
+export default function Component({ loaderData }: DashboardExpenseLayoutRoute.ComponentProps) {
   const { expenses } = loaderData;
   const navigation = useNavigation();
   const [searchParams] = useSearchParams();

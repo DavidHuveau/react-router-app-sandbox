@@ -12,11 +12,7 @@ export function loader({ context }: Route.LoaderArgs) {
   return { message: context.VALUE_FROM_EXPRESS };
 }
 
-export default function Component({
-  loaderData,
-}: {
-  loaderData: Awaited<ReturnType<typeof loader>>;
-}) {
+export default function Component({ loaderData }: { loaderData: Awaited<ReturnType<typeof loader>> }) {
   const { message } = loaderData;
   return <Welcome message={message} />;
 }

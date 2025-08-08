@@ -20,9 +20,7 @@ export async function loader({ request }: DashboardIncomeLayoutRoute.LoaderArgs)
   return { invoices };
 }
 
-export default function Component({
-  loaderData,
-}: DashboardIncomeLayoutRoute.ComponentProps) {
+export default function Component({ loaderData }: DashboardIncomeLayoutRoute.ComponentProps) {
   const { invoices } = loaderData;
   const navigation = useNavigation();
   const [searchParams] = useSearchParams();

@@ -35,10 +35,7 @@ async function deleteExpense(id: string) {
   }
 }
 
-export async function action({
-  request,
-  params,
-}: DashboardExpenseRoute.ActionArgs) {
+export async function action({ request, params }: DashboardExpenseRoute.ActionArgs) {
   const { id } = params;
   if (!id) throw Error("id parameter must be defined");
 
@@ -54,19 +51,14 @@ export async function action({
   }
 }
 
-export async function loader({
-  params,
-}: DashboardExpenseRoute.LoaderArgs) {
+export async function loader({ params }: DashboardExpenseRoute.LoaderArgs) {
   const expense = await db.expense.findUnique({ where: { id: params.id } });
   if (!expense) throw new Response("Not found", { status: 404 });
 
   return expense;
 }
 
-export default function Component({
-  loaderData,
-  actionData,
-}: DashboardExpenseRoute.ComponentProps) {
+export default function Component({ loaderData, actionData }: DashboardExpenseRoute.ComponentProps) {
   const { id, title, description, amount } = loaderData;
   const navigation = useNavigation();
   const isSubmitting = navigation.state !== "idle" && navigation.formAction === `/dashboard/expenses/${id}`;
