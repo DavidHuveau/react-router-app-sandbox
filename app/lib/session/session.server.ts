@@ -114,3 +114,31 @@ export async function logout(request: Request) {
     },
   });
 }
+
+export async function getUser(request: Request) {
+  const userId = await getUserId(request);
+  if (!userId) {
+    return null;
+  }
+
+  try {
+    return db.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true, name: true, email: true, createdAt: true, updatedAt: true
+      },
+    });
+  } catch {
+    throw logout(request);
+  }
+}
+
+export async function requireUserId(request: Request) {
+  const session = await getUserSession(request);
+  const userId = session.get("userId");
+  if (!userId || typeof userId !== "string") {
+    throw redirect("/login");
+  }
+
+  return userId;
+}

@@ -2,6 +2,7 @@ import { Outlet, Link, Form as FormRouter } from "react-router";
 import type { DashboardLayoutRoute } from "@/types/routes-types";
 import db from "@/lib/db.server";
 import { Container } from "react-bootstrap";
+import { useUser } from "@/lib/session/session";
 
 export async function loader() {
   const expenseQuery = db.expense.findFirst({
@@ -32,6 +33,7 @@ type LayoutProps = {
 };
 
 function Layout({ firstExpense, firstInvoice, children }: LayoutProps) {
+  const user = useUser();
   return (
     <>
       <header>
@@ -40,7 +42,8 @@ function Layout({ firstExpense, firstInvoice, children }: LayoutProps) {
             <li>
               <Link to="/">BeeRich</Link>
             </li>
-            <li>
+            <li style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              {user && <span>Hello, {user.name}</span>}
               <FormRouter method="POST" action="/logout">
                 <button type="submit">Log out</button>
               </FormRouter>

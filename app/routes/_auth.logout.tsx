@@ -1,5 +1,4 @@
-import type { ActionFunctionArgs } from "react-router";
-import { redirect } from "react-router";
+import { redirect, type ActionFunctionArgs } from "react-router";
 
 import { logout } from "@/lib/session/session.server";
 

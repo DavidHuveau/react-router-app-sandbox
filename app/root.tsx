@@ -6,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
   Link,
+  type LoaderFunctionArgs,
 } from "react-router";
 import { Alert, Container } from "react-bootstrap";
 
@@ -14,6 +15,7 @@ import "./app.css";
 
 import type { Route } from "./+types/root";
 import PageTransitionProgressBar from "@/components/PageTransitionProgressBar";
+import { getUser } from "./lib/session/session.server";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -45,6 +47,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </body>
     </html>
   );
+}
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const user = await getUser(request);
+  return { user };
 }
 
 export default function App() {
