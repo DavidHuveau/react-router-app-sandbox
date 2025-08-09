@@ -1,6 +1,7 @@
 import type { User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import db from "@/lib/db.server";
+import { createCookieSessionStorage, redirect } from "react-router";
 
 type UserRegistrationData = {
   name: string;
@@ -62,4 +63,54 @@ export async function loginUser({ email, password }: UserLoginData): Promise<Use
   }
 
   return user;
+}
+
+const sessionSecret = process.env.SESSION_SECRET;
+if (!sessionSecret) {
+  throw new Error("SESSION_SECRET must be set");
+}
+
+type SessionData = {
+  userId: string;
+};
+
+const { getSession, commitSession, destroySession } = createCookieSessionStorage<SessionData>({
+  cookie: {
+    name: "bee-rich-session",
+    // domain: "reactrouter.com",
+    secure: process.env.NODE_ENV === "production",
+    secrets: [sessionSecret],
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30,
+    httpOnly: true,
+  },
+});
+
+export async function createUserSession(user: User, headers = new Headers()) {
+  const session = await getSession();
+  session.set("userId", user.id);
+  headers.set("Set-Cookie", await commitSession(session));
+  return headers;
+}
+
+function getUserSession(request: Request) {
+  return getSession(request.headers.get("Cookie"));
+}
+
+export async function getUserId(request: Request) {
+  const session = await getUserSession(request);
+  const userId = session.get("userId");
+  if (!userId || typeof userId !== "string") return null;
+
+  return userId;
+}
+
+export async function logout(request: Request) {
+  const session = await getUserSession(request);
+  return redirect("/login", {
+    headers: {
+      "Set-Cookie": await destroySession(session),
+    },
+  });
 }

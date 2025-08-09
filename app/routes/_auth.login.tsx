@@ -1,6 +1,6 @@
 import { Button, Form, Card, Alert } from "react-bootstrap";
 import { Form as FormRouter, redirect, useNavigation } from "react-router";
-import { loginUser } from "@/lib/session/session.server";
+import { createUserSession, getUserId, loginUser } from "@/lib/session/session.server";
 import { validateEmail } from "@/lib/validation";
 import type { AuthLoginRoute } from "@/types/routes-types";
 
@@ -24,18 +24,19 @@ export async function action({ request }: AuthLoginRoute.ActionArgs) {
 
   try {
     const user = await loginUser({ email, password });
-    
-    return redirect("/dashboard");
+    return redirect("/dashboard", {
+      headers: await createUserSession(user),
+    });
   } catch (error: any) {
     return { error: error?.message || "Something went wrong. Please try again." };
   }
 }
 
 export async function loader({ request }: AuthLoginRoute.LoaderArgs) {
-  // const userId = await getUserId(request);
-  // if (userId) {
-  //   return redirect("/dashboard");
-  // }
+  const userId = await getUserId(request);
+  if (userId) {
+    return redirect("/dashboard");
+  }
   return {};
 }
 
