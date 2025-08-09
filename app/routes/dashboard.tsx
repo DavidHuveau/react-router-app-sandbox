@@ -1,4 +1,4 @@
-import { Outlet, Link } from "react-router";
+import { Outlet, Link, Form as FormRouter } from "react-router";
 import type { DashboardLayoutRoute } from "@/types/routes-types";
 import db from "@/lib/db.server";
 import { Container } from "react-bootstrap";
@@ -41,7 +41,9 @@ function Layout({ firstExpense, firstInvoice, children }: LayoutProps) {
               <Link to="/">BeeRich</Link>
             </li>
             <li>
-              <Link to="/404">Log out</Link>
+              <FormRouter method="POST" action="/logout">
+                <button type="submit">Log out</button>
+              </FormRouter>
             </li>
           </ul>
           <ul style={{ display: "flex", justifyContent: "center", gap: "2rem", padding: "1rem", listStyle: "none", margin: "1rem 0 0 0" }}>
