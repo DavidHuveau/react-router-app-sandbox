@@ -2,8 +2,10 @@ import { Outlet, Link, useNavigation, useSubmit, Form as FormRouter, useSearchPa
 import type { DashboardIncomeLayoutRoute } from "@/types/routes-types";
 import { Button, Form } from "react-bootstrap";
 import db from "@/lib/db.server";
+import { requireUserId } from "@/lib/session/session.server";
 
 export async function loader({ request }: DashboardIncomeLayoutRoute.LoaderArgs) {
+  const userId = await requireUserId(request);
   const url = new URL(request.url);
   const searchString = url.searchParams.get("q") || "";
   const invoices = await db.invoice.findMany({
@@ -11,7 +13,7 @@ export async function loader({ request }: DashboardIncomeLayoutRoute.LoaderArgs)
       createdAt: "desc",
     },
     where: {
-      userId: "886ce72c-361f-4beb-9ccb-80df6b73a32c",
+      userId,
       title: {
         contains: searchString,
       },

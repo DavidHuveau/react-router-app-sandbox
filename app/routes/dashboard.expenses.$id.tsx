@@ -3,8 +3,9 @@ import { Form as FormRouter, redirect, useNavigation, useParams, isRouteErrorRes
 import type { DashboardExpenseRoute } from "@/types/routes-types";
 
 import db from "@/lib/db.server";
+import { requireUserId } from "@/lib/session/session.server";
 
-async function updateExpense(id: string, formData: FormData) {
+async function updateExpense(id: string, formData: FormData, userId: string) {
   const title = formData.get("title");
   const description = formData.get("description");
   const amount = formData.get("amount");
@@ -18,7 +19,7 @@ async function updateExpense(id: string, formData: FormData) {
   }
 
   return db.expense.update({
-    where: { id },
+    where: { id, userId },
     data: { 
       title,
       description,
@@ -27,15 +28,16 @@ async function updateExpense(id: string, formData: FormData) {
   });
 }
 
-async function deleteExpense(id: string) {
+async function deleteExpense(id: string, userId: string) {
     try {
-    await db.expense.delete({ where: { id } });
+    await db.expense.delete({ where: { id, userId } });
   } catch (err) {
     throw new Response('Not found', { status: 404 });
   }
 }
 
 export async function action({ request, params }: DashboardExpenseRoute.ActionArgs) {
+  const userId = await requireUserId(request);
   const { id } = params;
   if (!id) throw Error("id parameter must be defined");
 
@@ -43,16 +45,17 @@ export async function action({ request, params }: DashboardExpenseRoute.ActionAr
   const intent = formData.get("intent");
 
   if (intent === "delete") {
-    await deleteExpense(id);
+    await deleteExpense(id, userId);
     return redirect("/dashboard/expenses");
   } else if (intent === "update") {
-    await updateExpense(id, formData);
+    await updateExpense(id, formData, userId);
     return { success: true };
   }
 }
 
-export async function loader({ params }: DashboardExpenseRoute.LoaderArgs) {
-  const expense = await db.expense.findUnique({ where: { id: params.id } });
+export async function loader({ request, params }: DashboardExpenseRoute.LoaderArgs) {
+  const userId = await requireUserId(request);
+  const expense = await db.expense.findUnique({ where: { id: params.id, userId } });
   if (!expense) throw new Response("Not found", { status: 404 });
 
   return expense;

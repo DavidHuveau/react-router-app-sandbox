@@ -2,8 +2,9 @@ import { Button, Form, Alert, Spinner, Container, Row, Col } from "react-bootstr
 import { Form as FormRouter, redirect, useNavigation, useParams, isRouteErrorResponse } from "react-router";
 import type { DashboardIncomeRoute } from "@/types/routes-types";
 import db from "@/lib/db.server";
+import { requireUserId } from "@/lib/session/session.server";
 
-async function updateIncome(id: string, formData: FormData) {
+async function updateIncome(id: string, formData: FormData, userId: string) {
   const title = formData.get("title");
   const description = formData.get("description");
   const amount = formData.get("amount");
@@ -17,7 +18,7 @@ async function updateIncome(id: string, formData: FormData) {
   }
 
   return db.invoice.update({
-    where: { id },
+    where: { id, userId },
     data: { 
       title,
       description,
@@ -26,15 +27,16 @@ async function updateIncome(id: string, formData: FormData) {
   });
 }
 
-async function deleteIncome(id: string) {
+async function deleteIncome(id: string, userId: string) {
     try {
-    await db.invoice.delete({ where: { id } });
+    await db.invoice.delete({ where: { id, userId } });
   } catch (err) {
     throw new Response('Not found', { status: 404 });
   }
 }
 
 export async function action({ request, params }: DashboardIncomeRoute.ActionArgs) {
+  const userId = await requireUserId(request);
   const { id } = params;
   if (!id) throw Error("id parameter must be defined");
 
@@ -42,16 +44,17 @@ export async function action({ request, params }: DashboardIncomeRoute.ActionArg
   const intent = formData.get("intent");
 
   if (intent === "delete") {
-    await deleteIncome(id);
+    await deleteIncome(id, userId);
     return redirect("/dashboard/income");
   } else if (intent === "update") {
-    await updateIncome(id, formData);
+    await updateIncome(id, formData, userId);
     return { success: true };
   }
 }
 
-export async function loader({ params }: DashboardIncomeRoute.LoaderArgs) {
-  const invoice = await db.invoice.findUnique({ where: { id: params.id } });
+export async function loader({ request, params }: DashboardIncomeRoute.LoaderArgs) {
+  const userId = await requireUserId(request);
+  const invoice = await db.invoice.findUnique({ where: { id: params.id, userId } });
   if (!invoice) throw new Response("Not found", { status: 404 });
 
   return invoice;

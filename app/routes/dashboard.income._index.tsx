@@ -2,8 +2,10 @@ import { Button, Form, Card } from "react-bootstrap";
 import { Form as FormRouter, redirect, useSubmit, useNavigation } from "react-router";
 import type { DashboardIncomeIndexRoute } from "@/types/routes-types";
 import db from "@/lib/db.server";
+import { requireUserId } from "@/lib/session/session.server";
 
 export async function action({ request }: DashboardIncomeIndexRoute.ActionArgs) {
+  const userId = await requireUserId(request);
   const formData = await request.formData();
   const title = formData.get("title");
   const description = formData.get("description");
@@ -23,6 +25,7 @@ export async function action({ request }: DashboardIncomeIndexRoute.ActionArgs) 
       description,
       amount: amountNumber,
       currencyCode: "USD",
+      userId,
     },
   });
 

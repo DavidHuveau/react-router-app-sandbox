@@ -3,23 +3,21 @@ import type { DashboardLayoutRoute } from "@/types/routes-types";
 import db from "@/lib/db.server";
 import { Container } from "react-bootstrap";
 import { useUser } from "@/lib/session/session";
+import { requireUserId } from "@/lib/session/session.server";
 
-export async function loader() {
+export async function loader({ request }: DashboardLayoutRoute.LoaderArgs) {
+  const userId = await requireUserId(request);
   const expenseQuery = db.expense.findFirst({
     orderBy: { 
       createdAt: "desc",
     },
-    where: {
-      userId: "886ce72c-361f-4beb-9ccb-80df6b73a32c"
-    },
+    where: { userId },
   });
   const invoiceQuery = db.invoice.findFirst({
     orderBy: {
       createdAt: "desc",
     },
-    where: {
-      userId: "886ce72c-361f-4beb-9ccb-80df6b73a32c"
-    },
+    where: { userId },
   });
 
   const [firstExpense, firstInvoice] = await Promise.all([expenseQuery, invoiceQuery]);

@@ -2,8 +2,10 @@ import { Outlet, Link, useNavigation, useSearchParams, Form as FormRouter } from
 import { Button, Form } from "react-bootstrap";
 import type { DashboardExpenseLayoutRoute } from "@/types/routes-types";
 import db from "@/lib/db.server";
+import { requireUserId } from "@/lib/session/session.server";
 
 export async function loader({ request }: DashboardExpenseLayoutRoute.LoaderArgs) {
+  const userId = await requireUserId(request);
   const url = new URL(request.url);
   const searchString = url.searchParams.get("q") || "";
   const expenses = await db.expense.findMany({
@@ -11,7 +13,7 @@ export async function loader({ request }: DashboardExpenseLayoutRoute.LoaderArgs
       createdAt: "desc",
     },
     where: {
-      userId: "886ce72c-361f-4beb-9ccb-80df6b73a32c",
+      userId,
       title: {
         contains: searchString,
       },
