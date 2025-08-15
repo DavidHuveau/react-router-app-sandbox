@@ -7,6 +7,7 @@ import {
   ScrollRestoration,
   Link,
   type LoaderFunctionArgs,
+  type MetaFunction,
 } from "react-router";
 import { Alert, Container } from "react-bootstrap";
 
@@ -16,6 +17,17 @@ import "./app.css";
 import type { Route } from "./+types/root";
 import PageTransitionProgressBar from "@/components/PageTransitionProgressBar";
 import { getUser } from "./lib/session/session.server";
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "BeeRich" },
+    {
+      name: "description",
+      content:
+        "Bee in control of your finances with BeeRich",
+    },
+  ];
+};
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

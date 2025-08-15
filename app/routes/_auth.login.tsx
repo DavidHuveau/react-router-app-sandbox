@@ -1,8 +1,23 @@
 import { Button, Form, Card, Alert } from "react-bootstrap";
-import { Form as FormRouter, redirect, useNavigation } from "react-router";
+import {
+  Form as FormRouter,
+  redirect,
+  useNavigation,
+  type MetaFunction,
+} from "react-router";
 import { createUserSession, getUserId, loginUser } from "@/lib/session/session.server";
 import { validateEmail } from "@/lib/validation";
 import type { AuthLoginRoute } from "@/types/routes-types";
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Log In | BeeRich" },
+    {
+      name: "description",
+      content: "Log into your BeeRich account to track your expenses and income.",
+    },
+  ];
+};
 
 export async function action({ request }: AuthLoginRoute.ActionArgs) {
   const formData = await request.formData();
