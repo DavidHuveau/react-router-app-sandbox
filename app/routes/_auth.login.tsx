@@ -9,12 +9,13 @@ import {
 import { createUserSession, getUserId, loginUser } from "@/lib/session/session.server";
 import { validateEmail } from "@/lib/validation";
 import type { AuthLoginRoute } from "@/types/routes-types";
+import "@/styles/login.css";
 
 export const links: LinksFunction = () => [
   {
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Federant&display=swap",
-  },
+  }
 ];
 
 export const meta: MetaFunction = () => {
@@ -68,10 +69,10 @@ export default function Component({ actionData }: AuthLoginRoute.ComponentProps)
   const isSubmitting = navigation.state !== "idle" && navigation.formAction === "/login";
 
   return (
-    <div style={{ maxWidth: "400px", margin: "0 auto", padding: "2rem" }}>
+    <div className="login-page" style={{ maxWidth: "400px", margin: "0 auto", padding: "2rem" }}>
       <Card>
         <Card.Body>
-          <h1 className="mb-4" style={{ fontFamily: "Federant, sans-serif" }}>Log In</h1>
+          <h1 className="mb-4">Log In</h1>
           
           {actionData?.error && (
             <Alert variant="danger" className="mb-3">
