@@ -48,7 +48,7 @@ function Layout({ firstExpense, firstInvoice, children }: LayoutProps) {
         <nav>
           <ul style={{ display: "flex", justifyContent: "space-between", padding: "1rem", listStyle: "none", margin: 0 }}>
             <li>
-              <Link to="/">BeeRich</Link>
+              <Link to="/" prefetch="intent">BeeRich</Link>
             </li>
             <li style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
               {user && <span>Hello, {user.name}</span>}
@@ -59,10 +59,10 @@ function Layout({ firstExpense, firstInvoice, children }: LayoutProps) {
           </ul>
           <ul style={{ display: "flex", justifyContent: "center", gap: "2rem", padding: "1rem", listStyle: "none", margin: "1rem 0 0 0" }}>
             <li>
-            <Link to={firstInvoice ? `/dashboard/income/${firstInvoice.id}` : "/dashboard/income"}>Income</Link>
+            <Link to={firstInvoice ? `/dashboard/income/${firstInvoice.id}` : "/dashboard/income"} prefetch="intent">Income</Link>
             </li>
             <li>
-            <Link to={firstExpense ? `/dashboard/expenses/${firstExpense.id}` : "/dashboard/expenses"}>Expenses</Link>
+            <Link to={firstExpense ? `/dashboard/expenses/${firstExpense.id}` : "/dashboard/expenses"} prefetch="intent">Expenses</Link>
             </li>
           </ul>
         </nav>

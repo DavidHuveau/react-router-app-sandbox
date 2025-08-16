@@ -7,13 +7,13 @@ export default function AuthLayout() {
         <nav style={{ padding: "1rem" }}>
           <ul style={{ display: "flex", listStyle: "none", margin: 0, padding: 0 }}>
             <li>
-              <Link to="/">BeeRich</Link>
+              <Link to="/" prefetch="intent">BeeRich</Link>
             </li>
             <li style={{ marginLeft: "auto", marginRight: "1rem" }}>
-              <Link to="/login">Log in</Link>
+              <Link to="/login" prefetch="intent">Log in</Link>
             </li>
             <li>
-              <Link to="/signup">Sign up</Link>
+              <Link to="/signup" prefetch="intent">Sign up</Link>
             </li>
           </ul>
         </nav>
