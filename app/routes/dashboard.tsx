@@ -1,9 +1,19 @@
-import { Outlet, Link, Form as FormRouter } from "react-router";
+import { Outlet, Link, Form as FormRouter, type MetaFunction } from "react-router";
 import type { DashboardLayoutRoute } from "@/types/routes-types";
 import db from "@/lib/db.server";
 import { Container } from "react-bootstrap";
 import { useUser } from "@/lib/session/session";
 import { requireUserId } from "@/lib/session/session.server";
+
+export const meta: MetaFunction<typeof loader> = ({ matches }) => {
+  const root = matches.find((match) => match.id === "root");
+  const userName = (root?.data as any)?.user?.name || null;
+  return [
+    { title: `${userName ? `${userName}'s Dashboard` : "Dashboard"} | BeeRich` },
+    { name: "description", content: "Dashboard" },
+    { name: "robots", content: "noindex" }
+  ];
+};
 
 export async function loader({ request }: DashboardLayoutRoute.LoaderArgs) {
   const userId = await requireUserId(request);

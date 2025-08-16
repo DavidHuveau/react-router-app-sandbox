@@ -1,9 +1,16 @@
 import { Button, Form, Alert, Spinner, Container, Row, Col } from "react-bootstrap";
-import { Form as FormRouter, redirect, useNavigation, useParams, isRouteErrorResponse } from "react-router";
+import { 
+  Form as FormRouter,
+  redirect,
+  useNavigation,
+  useParams,
+  isRouteErrorResponse,
+  type MetaFunction,
+} from "react-router";
 import type { DashboardExpenseRoute } from "@/types/routes-types";
-
 import db from "@/lib/db.server";
 import { requireUserId } from "@/lib/session/session.server";
+import { useEffect } from "react";
 
 async function updateExpense(id: string, formData: FormData, userId: string) {
   const title = formData.get("title");
@@ -68,6 +75,11 @@ export default function Component({ loaderData, actionData }: DashboardExpenseRo
   const submittingIntent = navigation.formData?.get("intent");
   const isUpdating = isSubmitting && submittingIntent === "update";
   const isDeleting = isSubmitting && submittingIntent === "delete";
+
+  useEffect(() => {
+    document.title = `${title} - BeeRich`;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', `Expense: ${description || "No description"}`);
+  }, [title, description]);
 
   return (
     <>
