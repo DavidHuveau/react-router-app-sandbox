@@ -12,6 +12,15 @@ export function createInvoice({ title, description, amount, userId }: InvoiceCre
       amount,
       currencyCode: "USD",
       userId,
+      logs: {
+        create: {
+          title,
+          description,
+          amount,
+          currencyCode: "USD",
+          userId,
+        },
+      },
     },
   });
 }
@@ -31,6 +40,15 @@ export function updateInvoice({ id, title, description, amount, userId }: Invoic
       title,
       description,
       amount,
+      logs: {
+        create: {
+          title,
+          description,
+          amount,
+          currencyCode: "USD",
+          userId,
+        },
+      },
     },
   });
 }

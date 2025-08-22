@@ -44,9 +44,13 @@ export async function action({ request, params }: DashboardExpenseRoute.ActionAr
 
 export async function loader({ request, params }: DashboardExpenseRoute.LoaderArgs) {
   const userId = await requireUserId(request);
-  const expense = await db.expense.findUnique({ where: { id: params.id, userId } });
+  const expense = await db.expense.findUnique({
+    where: { id: params.id, userId },
+    include: {
+      logs: true
+    }
+  });
   if (!expense) throw new Response("Not found", { status: 404 });
-
   return expense;
 }
 

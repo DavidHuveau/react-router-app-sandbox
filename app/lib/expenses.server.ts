@@ -12,6 +12,15 @@ export function createExpense({ title, description, amount, userId }: ExpenseCre
       amount,
       currencyCode: "USD",
       userId,
+      logs: {
+        create: {
+          title,
+          description,
+          amount,
+          currencyCode: "USD",
+          userId,
+        },
+      },
     },
   });
 }
@@ -31,6 +40,15 @@ export function updateExpense({ id, title, description, amount, userId }: Expens
       title,
       description,
       amount,
+      logs: {
+        create: {
+          title,
+          description,
+          amount,
+          currencyCode: "USD",
+          userId,
+        },
+      },
     },
   });
 }

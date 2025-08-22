@@ -44,7 +44,12 @@ export async function action({ request, params }: DashboardIncomeRoute.ActionArg
 
 export async function loader({ request, params }: DashboardIncomeRoute.LoaderArgs) {
   const userId = await requireUserId(request);
-  const invoice = await db.invoice.findUnique({ where: { id: params.id, userId } });
+  const invoice = await db.invoice.findUnique({
+    where: { id: params.id, userId },
+    include: {
+      logs: true
+    }
+  });
   if (!invoice) throw new Response("Not found", { status: 404 });
 
   return invoice;
