@@ -5,14 +5,14 @@ import {
   useNavigation,
   useParams,
   isRouteErrorResponse,
-  type MetaFunction,
 } from "react-router";
 import type { DashboardExpenseRoute } from "@/types/routes-types";
 import db from "@/lib/db.server";
 import { requireUserId } from "@/lib/session/session.server";
 import { useEffect } from "react";
+import { deleteExpense, updateExpense } from "@/lib/expenses.server";
 
-async function updateExpense(id: string, formData: FormData, userId: string) {
+async function handleUpdate(id: string, formData: FormData, userId: string) {
   const title = formData.get("title");
   const description = formData.get("description");
   const amount = formData.get("amount");
@@ -24,20 +24,12 @@ async function updateExpense(id: string, formData: FormData, userId: string) {
   if (Number.isNaN(amountNumber)) {
     throw Error("something went wrong");
   }
-
-  return db.expense.update({
-    where: { id, userId },
-    data: { 
-      title,
-      description,
-      amount: amountNumber,
-    },
-  });
+  return updateExpense({ id, title, description, amount: amountNumber, userId });
 }
 
-async function deleteExpense(id: string, userId: string) {
+async function handleDelete(id: string, userId: string) {
     try {
-    await db.expense.delete({ where: { id, userId } });
+      await deleteExpense(id, userId);
   } catch (err) {
     throw new Response('Not found', { status: 404 });
   }
@@ -52,10 +44,10 @@ export async function action({ request, params }: DashboardExpenseRoute.ActionAr
   const intent = formData.get("intent");
 
   if (intent === "delete") {
-    await deleteExpense(id, userId);
+    await handleDelete(id, userId);
     return redirect("/dashboard/expenses");
   } else if (intent === "update") {
-    await updateExpense(id, formData, userId);
+    await handleUpdate(id, formData, userId);
     return { success: true };
   }
 }

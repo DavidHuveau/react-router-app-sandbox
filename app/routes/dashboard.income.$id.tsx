@@ -10,8 +10,9 @@ import type { DashboardIncomeRoute } from "@/types/routes-types";
 import db from "@/lib/db.server";
 import { requireUserId } from "@/lib/session/session.server";
 import { useEffect } from "react";
+import { updateInvoice, deleteInvoice } from "@/lib/invoices.server";
 
-async function updateIncome(id: string, formData: FormData, userId: string) {
+async function handleUpdate(id: string, formData: FormData, userId: string) {
   const title = formData.get("title");
   const description = formData.get("description");
   const amount = formData.get("amount");
@@ -23,20 +24,12 @@ async function updateIncome(id: string, formData: FormData, userId: string) {
   if (Number.isNaN(amountNumber)) {
     throw Error("something went wrong");
   }
-
-  return db.invoice.update({
-    where: { id, userId },
-    data: { 
-      title,
-      description,
-      amount: amountNumber,
-    },
-  });
+  return updateInvoice({ id, title, description, amount: amountNumber, userId });
 }
 
-async function deleteIncome(id: string, userId: string) {
+async function handleDelete(id: string, userId: string) {
     try {
-    await db.invoice.delete({ where: { id, userId } });
+    await deleteInvoice(id, userId);
   } catch (err) {
     throw new Response('Not found', { status: 404 });
   }
@@ -51,10 +44,10 @@ export async function action({ request, params }: DashboardIncomeRoute.ActionArg
   const intent = formData.get("intent");
 
   if (intent === "delete") {
-    await deleteIncome(id, userId);
+    await handleDelete(id, userId);
     return redirect("/dashboard/income");
   } else if (intent === "update") {
-    await updateIncome(id, formData, userId);
+    await handleUpdate(id, formData, userId);
     return { success: true };
   }
 }

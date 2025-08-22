@@ -1,8 +1,8 @@
 import { Button, Form, Card } from "react-bootstrap";
 import { Form as FormRouter, redirect, useSubmit, useNavigation } from "react-router";
 import type { DashboardExpenseIndexRoute } from "@/types/routes-types";
-import db from "@/lib/db.server";
 import { requireUserId } from "@/lib/session/session.server";
+import { createExpense } from "@/lib/expenses.server";
 
 export async function action({ request }: DashboardExpenseIndexRoute.ActionArgs) {
   const userId = await requireUserId(request);
@@ -18,17 +18,7 @@ export async function action({ request }: DashboardExpenseIndexRoute.ActionArgs)
   if (Number.isNaN(amountNumber)) {
     throw Error('something went wrong');
   }
-  
-  const expense = await db.expense.create({
-    data: { 
-      title,
-      description,
-      amount: amountNumber,
-      currencyCode: "USD",
-      userId,
-    },
-  });
-
+  const expense = await createExpense({ userId, title, description, amount: amountNumber });
   return redirect(`/dashboard/expenses/${expense.id}`);
 }
 

@@ -1,8 +1,8 @@
 import { Button, Form, Card } from "react-bootstrap";
 import { Form as FormRouter, redirect, useSubmit, useNavigation } from "react-router";
 import type { DashboardIncomeIndexRoute } from "@/types/routes-types";
-import db from "@/lib/db.server";
 import { requireUserId } from "@/lib/session/session.server";
+import { createInvoice } from "@/lib/invoices.server";
 
 export async function action({ request }: DashboardIncomeIndexRoute.ActionArgs) {
   const userId = await requireUserId(request);
@@ -19,16 +19,7 @@ export async function action({ request }: DashboardIncomeIndexRoute.ActionArgs) 
     throw Error('something went wrong');
   }
   
-  const invoice = await db.invoice.create({
-    data: { 
-      title,
-      description,
-      amount: amountNumber,
-      currencyCode: "USD",
-      userId,
-    },
-  });
-
+  const invoice = await createInvoice({ title, description, amount: amountNumber, userId });
   return redirect(`/dashboard/income/${invoice.id}`);
 }
 
