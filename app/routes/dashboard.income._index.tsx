@@ -2,24 +2,13 @@ import { Button, Form, Card } from "react-bootstrap";
 import { Form as FormRouter, redirect, useSubmit, useNavigation } from "react-router";
 import type { DashboardIncomeIndexRoute } from "@/types/routes-types";
 import { requireUserId } from "@/lib/session/session.server";
-import { createInvoice } from "@/lib/invoices.server";
+import { createInvoice, parseInvoice } from "@/lib/invoices.server";
 
 export async function action({ request }: DashboardIncomeIndexRoute.ActionArgs) {
   const userId = await requireUserId(request);
   const formData = await request.formData();
-  const title = formData.get("title");
-  const description = formData.get("description");
-  const amount = formData.get("amount");
-
-  if (typeof title !== "string" || typeof description !== "string" || typeof amount !== "string") {
-    throw Error('something went wrong');
-  }
-  const amountNumber = Number.parseFloat(amount);
-  if (Number.isNaN(amountNumber)) {
-    throw Error('something went wrong');
-  }
-  
-  const invoice = await createInvoice({ title, description, amount: amountNumber, userId });
+  const invoiceData = parseInvoice(formData); 
+  const invoice = await createInvoice({ userId, ...invoiceData });
   return redirect(`/dashboard/income/${invoice.id}`);
 }
 
@@ -30,7 +19,7 @@ export default function Component() {
 
   const handleQuickAdd = (title: string, amount: number) => {
     submit(
-      { title, description: "Quick add", amount: amount.toString() },
+      { title, description: "Quick add", amount },
       { method: "POST", action: "/dashboard/income/?index" }
     );
   };

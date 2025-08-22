@@ -10,21 +10,11 @@ import type { DashboardIncomeRoute } from "@/types/routes-types";
 import db from "@/lib/db.server";
 import { requireUserId } from "@/lib/session/session.server";
 import { useEffect } from "react";
-import { updateInvoice, deleteInvoice } from "@/lib/invoices.server";
+import { updateInvoice, deleteInvoice, parseInvoice } from "@/lib/invoices.server";
 
 async function handleUpdate(id: string, formData: FormData, userId: string) {
-  const title = formData.get("title");
-  const description = formData.get("description");
-  const amount = formData.get("amount");
-
-  if (typeof title !== "string" || typeof description !== "string" || typeof amount !== "string") {
-    throw Error("something went wrong");
-  }
-  const amountNumber = Number.parseFloat(amount);
-  if (Number.isNaN(amountNumber)) {
-    throw Error("something went wrong");
-  }
-  return updateInvoice({ id, title, description, amount: amountNumber, userId });
+  const expenseData = parseInvoice(formData);
+  return await updateInvoice({ id, userId, ...expenseData });
 }
 
 async function handleDelete(id: string, userId: string) {

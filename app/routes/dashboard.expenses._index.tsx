@@ -2,23 +2,13 @@ import { Button, Form, Card } from "react-bootstrap";
 import { Form as FormRouter, redirect, useSubmit, useNavigation } from "react-router";
 import type { DashboardExpenseIndexRoute } from "@/types/routes-types";
 import { requireUserId } from "@/lib/session/session.server";
-import { createExpense } from "@/lib/expenses.server";
+import { createExpense, parseExpense } from "@/lib/expenses.server";
 
 export async function action({ request }: DashboardExpenseIndexRoute.ActionArgs) {
   const userId = await requireUserId(request);
   const formData = await request.formData();
-  const title = formData.get("title");
-  const description = formData.get("description");
-  const amount = formData.get("amount");
-
-  if (typeof title !== "string" || typeof description !== "string" || typeof amount !== "string") {
-    throw Error('something went wrong');
-  }
-  const amountNumber = Number.parseFloat(amount);
-  if (Number.isNaN(amountNumber)) {
-    throw Error('something went wrong');
-  }
-  const expense = await createExpense({ userId, title, description, amount: amountNumber });
+  const expenseData = parseExpense(formData); 
+  const expense = await createExpense({ userId, ...expenseData });
   return redirect(`/dashboard/expenses/${expense.id}`);
 }
 
@@ -29,7 +19,7 @@ export default function Component() {
 
   const handleQuickAdd = (title: string, amount: number) => {
     submit(
-      { title, description: "Quick add", amount: amount.toString() },
+      { title, description: "Quick add", amount },
       { method: "POST", action: "/dashboard/expenses/?index" }
     );
   };

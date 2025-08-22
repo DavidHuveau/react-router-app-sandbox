@@ -10,21 +10,11 @@ import type { DashboardExpenseRoute } from "@/types/routes-types";
 import db from "@/lib/db.server";
 import { requireUserId } from "@/lib/session/session.server";
 import { useEffect } from "react";
-import { deleteExpense, updateExpense } from "@/lib/expenses.server";
+import { deleteExpense, parseExpense, updateExpense } from "@/lib/expenses.server";
 
 async function handleUpdate(id: string, formData: FormData, userId: string) {
-  const title = formData.get("title");
-  const description = formData.get("description");
-  const amount = formData.get("amount");
-
-  if (typeof title !== "string" || typeof description !== "string" || typeof amount !== "string") {
-    throw Error("something went wrong");
-  }
-  const amountNumber = Number.parseFloat(amount);
-  if (Number.isNaN(amountNumber)) {
-    throw Error("something went wrong");
-  }
-  return updateExpense({ id, title, description, amount: amountNumber, userId });
+  const expenseData = parseExpense(formData);
+  return await updateExpense({ id, userId, ...expenseData });
 }
 
 async function handleDelete(id: string, userId: string) {
