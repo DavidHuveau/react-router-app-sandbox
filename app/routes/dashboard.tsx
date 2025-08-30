@@ -4,6 +4,7 @@ import db from "@/lib/db.server";
 import { Container } from "react-bootstrap";
 import { useUser } from "@/lib/session/session";
 import { requireUserId } from "@/lib/session/session.server";
+import { useEventSource } from "@/lib/server-sent-events/event-source";
 
 export const meta: MetaFunction<typeof loader> = ({ matches }) => {
   const root = matches.find((match) => match.id === "root");
@@ -76,6 +77,8 @@ function Layout({ firstExpense, firstInvoice, children }: LayoutProps) {
 
 export default function Component({ loaderData }: DashboardLayoutRoute.ComponentProps) {
   const { firstExpense, firstInvoice } = loaderData;
+
+  useEventSource();
 
   return (
     <Layout firstExpense={firstExpense} firstInvoice={firstInvoice}>
