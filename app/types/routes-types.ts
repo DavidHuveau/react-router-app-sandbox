@@ -9,4 +9,4 @@ export type { Route as DashboardLayoutRoute } from ".react-router/types/app/rout
 export type { Route as AuthSignupRoute } from ".react-router/types/app/routes/+types/_auth.signup";
 export type { Route as AuthLoginRoute } from ".react-router/types/app/routes/+types/_auth.login";
 
-export type { Route as SSERoute } from ".react-router/types/app/routes/+types/sse";
+export type { Route as SSENotificationsRoute } from ".react-router/types/app/routes/+types/sse.notifications";

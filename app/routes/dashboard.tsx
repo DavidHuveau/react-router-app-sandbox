@@ -5,6 +5,7 @@ import { Container } from "react-bootstrap";
 import { useUser } from "@/lib/session/session";
 import { requireUserId } from "@/lib/session/session.server";
 import { useEventSource } from "@/lib/server-sent-events/event-source";
+import Notifications from "@/components/Notifications";
 
 export const meta: MetaFunction<typeof loader> = ({ matches }) => {
   const root = matches.find((match) => match.id === "root");
@@ -69,6 +70,7 @@ function Layout({ firstExpense, firstInvoice, children }: LayoutProps) {
         </nav>
       </header>
       <main style={{ padding: "1rem" }}>
+        <Notifications />
         {children}
       </main>
     </>

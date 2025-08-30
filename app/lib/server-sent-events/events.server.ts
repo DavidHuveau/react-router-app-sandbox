@@ -1,53 +1,58 @@
-import { EventEmitter } from "events";
+// Store clients by userId - simpler and more direct
+let clients: Record<string, ((msg: string) => void)[]> = {};
 
-declare global {
-  // eslint-disable-next-line no-var
-  var emitter: EventEmitter;
-}
-
-global.emitter = global.emitter || new EventEmitter();
-
-export const emitter = global.emitter;
-
-export type SendEvent = (event: string, data: string) => void;
-export type OnSetup = (send: SendEvent) => OnClose;
-export type OnClose = () => void;
-
-export function eventStream(request: Request, onSetup: OnSetup) {
+export function eventStream(request: Request, userId: string) {
   const stream = new ReadableStream({
     start(controller) {
       const encoder = new TextEncoder();
+      
+      const write = (msg: string) =>
+        controller.enqueue(encoder.encode(`data: ${msg}\n\n`));
 
-      const send: SendEvent = (event, data) => {
-        controller.enqueue(encoder.encode(`event: ${event}\n`));
-        controller.enqueue(encoder.encode(`data: ${data}\n\n`));
-      };
+      // Store the write function in memory for this userId
+      if (!clients[userId]) clients[userId] = [];
+      clients[userId].push(write);
 
-      const onClose = onSetup(send);
+      // Welcome message
+      write("connected ✅");
 
-      let closed = false;
-      const close = () => {
-        if (closed) return;
-
-        closed = true;
-        onClose();
-        request.signal.removeEventListener("abort", close);
-        controller.close();
-      };
-
-      request.signal.addEventListener("abort", close);
-      if (request.signal.aborted) {
-        close();
-        return;
-      }
+      // Cleanup when client closes the connection
+      request.signal.addEventListener("abort", () => {
+        clients[userId] = clients[userId].filter((w) => w !== write);
+        // Clean up empty array
+        if (clients[userId].length === 0) {
+          delete clients[userId];
+        }
+      });
     },
   });
 
   return new Response(stream, {
     headers: {
+      "Content-Type": "text/event-stream",
       "Cache-Control": "no-store, no-transform",
       Connection: "keep-alive",
-      "Content-Type": "text/event-stream",
     },
   });
 }
+
+export function notifyUser(userId: string, message: string) {
+  if (clients[userId]) {
+    clients[userId].forEach((write) => {
+      try {
+        write(message);
+      } catch (error) {
+        console.error(`Error sending to user ${userId}:`, error);
+      }
+    });
+  }
+}
+
+export function notifyAll(message: string) {
+  Object.keys(clients).forEach((userId) => {
+    notifyUser(userId, message);
+  });
+}
+
+// Export to use in actions
+export { clients };

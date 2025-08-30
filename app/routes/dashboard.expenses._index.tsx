@@ -3,14 +3,16 @@ import { Form as FormRouter, redirect, useSubmit, useNavigation } from "react-ro
 import type { DashboardExpenseIndexRoute } from "@/types/routes-types";
 import { requireUserId } from "@/lib/session/session.server";
 import { createExpense, parseExpense } from "@/lib/expenses.server";
-import { emitter } from "@/lib/server-sent-events/events.server";
+import { notifyUser } from "@/lib/server-sent-events/events.server";
 
 export async function action({ request }: DashboardExpenseIndexRoute.ActionArgs) {
   const userId = await requireUserId(request);
   const formData = await request.formData();
   const expenseData = parseExpense(formData); 
   const expense = await createExpense({ userId, ...expenseData });
-  emitter.emit(userId);
+  
+  notifyUser(userId, `💰 New expense created: ${expense.title} ($${expense.amount})`);
+  
   return redirect(`/dashboard/expenses/${expense.id}`);
 }
 
