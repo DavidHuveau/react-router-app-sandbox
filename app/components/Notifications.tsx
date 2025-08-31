@@ -1,29 +1,35 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Toast, ToastContainer } from "react-bootstrap";
+import { useEventSource } from "@/lib/server-sent-events/event-source";
 
 export default function Notifications() {
-  const [message, setMessage] = useState<string>("");
+  const [messages, setMessages] = useState<string[]>([]);
 
-  useEffect(() => {
-    const evtSource = new EventSource(`/sse/notifications`);
+  // Listen to the specific "expense-created" event
+  useEventSource("expense-created", (data: string) => {
+    setMessages((prev) => [...prev, data]);
+  });
 
-    evtSource.onmessage = (event) => {
-      setMessage(event.data);
-    };
-
-    // Handle errors
-    evtSource.onerror = (error) => {
-      console.error("SSE error:", error);
-      evtSource.close();
-    };
-
-    return () => {
-      evtSource.close();
-    };
-  }, []);
+  const removeMessage = (index: number) => {
+    setMessages(prev => prev.filter((_, i) => i !== index));
+  };
 
   return (
-    <div className="notifications">
-      <p className="text-red-600">{message}</p>
-    </div>
+    <ToastContainer position="top-end" className="p-3">
+      {messages.map((msg, i) => (
+        <Toast 
+          key={i} 
+          show={true} 
+          delay={5000} 
+          autohide
+          onClose={() => removeMessage(i)}
+        >
+          <Toast.Header>
+            <strong className="me-auto">Notification</strong>
+          </Toast.Header>
+          <Toast.Body>{msg}</Toast.Body>
+        </Toast>
+      ))}
+    </ToastContainer>
   );
 }

@@ -1,21 +1,30 @@
 import { useRevalidator } from "react-router";
 import { useEffect } from "react";
 
-export function useEventSource() {
+export function useEventSource(
+  eventName: string,
+  callback: (data: string) => void, 
+  shouldRevalidate: boolean = false
+) {
   const { revalidate } = useRevalidator();
 
   useEffect(() => {
     function handler(event: MessageEvent) {
       console.log(`Received server event [${new Date().toLocaleTimeString()}] - userId: `, event.data);
-      revalidate();
+
+      callback(event.data);
+
+      if (shouldRevalidate) {
+        revalidate();
+      }
     }
 
-    const eventSource = new EventSource("/sse");
-    eventSource.addEventListener("server-change", handler);
+    const eventSource = new EventSource("/sse-notifications");
+    eventSource.addEventListener(eventName, handler);
 
     return () => {
-      eventSource.removeEventListener("server-change", handler);
+      eventSource.removeEventListener(eventName, handler);
       eventSource.close();
     };
-  }, [revalidate]);
+  }, [revalidate, callback, shouldRevalidate, eventName]);
 }
