@@ -9,6 +9,7 @@ import {
 import { createUserSession, getUserId, loginUser } from "@/lib/session/session.server";
 import { validateEmail } from "@/lib/validation";
 import type { AuthLoginRoute } from "@/types/routes-types";
+import { getVisitorCookieData } from "@/lib/visitors.server";
 import "@/styles/login.css";
 
 export const links: LinksFunction = () => [
@@ -48,7 +49,8 @@ export async function action({ request }: AuthLoginRoute.ActionArgs) {
 
   try {
     const user = await loginUser({ email, password });
-    return redirect("/dashboard", {
+    const { redirectUrl } = await getVisitorCookieData(request);
+    return redirect(redirectUrl || "/dashboard", {
       headers: await createUserSession(user),
     });
   } catch (error: any) {

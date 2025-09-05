@@ -2,6 +2,7 @@ import type { User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import db from "@/lib/db.server";
 import { createCookieSessionStorage, redirect } from "react-router";
+import { setVisitorCookieData } from "@/lib/visitors.server";
 
 type UserRegistrationData = {
   name: string;
@@ -137,7 +138,8 @@ export async function requireUserId(request: Request) {
   const session = await getUserSession(request);
   const userId = session.get("userId");
   if (!userId || typeof userId !== "string") {
-    throw redirect("/login");
+    const headers = await setVisitorCookieData({ redirectUrl: request.url });
+    throw redirect("/login", { headers });
   }
 
   return userId;
