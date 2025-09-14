@@ -1,33 +1,46 @@
+import { Prisma } from "@prisma/client";
 import { Outlet, Link, useNavigation, useSearchParams, Form as FormRouter } from "react-router";
 import { Button, Form } from "react-bootstrap";
 import type { DashboardExpenseLayoutRoute } from "@/types/routes-types";
 import db from "@/lib/db.server";
 import { requireUserId } from "@/lib/session/session.server";
 
+const PAGE_SIZE = 10;
+
 export async function loader({ request }: DashboardExpenseLayoutRoute.LoaderArgs) {
   const userId = await requireUserId(request);
   const url = new URL(request.url);
   const searchString = url.searchParams.get("q") || "";
-  const expenses = await db.expense.findMany({
-    orderBy: {
-      createdAt: "desc",
+  const pageNumber = Number(url.searchParams.get("page")) || 1;
+  const where: Prisma.ExpenseWhereInput = {
+    userId,
+    title: {
+      contains: searchString ? searchString : '',
     },
-    where: {
-      userId,
-      title: {
-        contains: searchString,
+  };
+  const [count, expenses] = await db.$transaction([
+    db.expense.count({ where }),
+    db.expense.findMany({
+      orderBy: {
+        createdAt: "desc",
       },
-    },
-  });
-  return { expenses };
+      skip: (pageNumber - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+      where
+    })
+  ]);
+  return { count, expenses };
 }
 
 export default function Component({ loaderData }: DashboardExpenseLayoutRoute.ComponentProps) {
-  const { expenses } = loaderData;
+  const { count, expenses } = loaderData;
   const navigation = useNavigation();
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("q") || "";
+  const pageNumber = Number(searchParams.get("page")) || 1;
 
+  const isOnFirstPage = pageNumber === 1;
+  const showPagination = count > PAGE_SIZE || !isOnFirstPage;
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <section style={{ width: "250px", borderRight: "1px solid #ccc", padding: "20px" }}>
@@ -35,6 +48,7 @@ export default function Component({ loaderData }: DashboardExpenseLayoutRoute.Co
         <FormRouter method="GET">
           <Form.Group className="mb-3">
             <Form.Label>Search by title</Form.Label>
+            <Form.Control type="hidden" name="page" value={1} />
             <Form.Control type="search" name="q" placeholder="Monthly Salary" defaultValue={searchQuery} />
           </Form.Group>
         </FormRouter>
@@ -60,6 +74,17 @@ export default function Component({ loaderData }: DashboardExpenseLayoutRoute.Co
               </li>
             ))}
           </ul>
+          {showPagination && (
+            <FormRouter method="GET" action={location.pathname} className="d-flex justify-content-between pb-5">
+              <input type="hidden" name="q" value={searchQuery} />
+              <Button type="submit" name="page" value={pageNumber - 1} disabled={pageNumber === 1}>
+                Previous
+              </Button>
+              <Button type="submit" name="page" value={pageNumber + 1} disabled={count <= pageNumber * PAGE_SIZE}>
+                Next
+              </Button>
+            </FormRouter>
+          )}
         </nav>
       </section>
       <section 
